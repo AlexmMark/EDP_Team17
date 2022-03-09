@@ -8,6 +8,10 @@ jon.trinder@glasgow.ac.uk
  
 */
 
+//examples for 8 bit display
+// We need to convert it to work for 16 bits, and then 
+// move to signal processing.
+
 #define max7219_reg_noop         0x00
 #define max7219_reg_digit0       0x01
 #define max7219_reg_digit1       0x02

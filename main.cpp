@@ -33,13 +33,33 @@ jon.trinder@glasgow.ac.uk
 #define LOW 0
 #define HIGH 1
 
+//  TIMER
+
+Timer timeCount;
+
+// VARIABLES 
+
+AnalogIn Ain(PTB1);
+
 SPI max72_spi(PTD2, NC, PTD1);
 DigitalOut load(PTD0); //will provide the load signal
 
+// ARRAYS
 
 char  pattern_diagonal[8] = { 0x01, 0x2,0x4,0x08,0x10,0x20,0x40,0x80};
 char  pattern_square[8] = { 0xff, 0x81,0x81,0x81,0x81,0x81,0x81,0xff};  
 char  pattern_star[8] = { 0x04, 0x15, 0x0e, 0x1f, 0x0e, 0x15, 0x04, 0x00};
+char a_pattern[8] = {0xff, 0x7e, 0x3c, 0x18, 0x18, 0x18, 0x7e, 0x81};
+
+int Data_ArrayBuffer[8];
+
+//Array to store data from ADC !!!!
+int Data_Array[8];
+
+// POINTERS 
+
+int *sample;
+int *data;
 
 
 /*
@@ -93,10 +113,29 @@ void clear(){
     }
 }
 
+// Analogue to Digital Converter
+int adc(){
+    
+    unsigned int i = 0;
+    
+    i = Ain.read_u16();
+    //Aout.write_u16(i);
+    //Data_ArrayBuffer[x] = i;
+    printf("Sample i is: %d", i);
+    wait(0.001);
+    
+    return i;
+    }
+
 
 int main()
 {
-    setup_dot_matrix ();      /* setup matric */
+    //start timer
+    timeCount.start();
+    
+    setup_dot_matrix ();      /* setup matrix */
+    
+    //loop through patterns
     while(1){
     //da_star();
     pattern_to_display(pattern_diagonal);
@@ -105,7 +144,13 @@ int main()
     wait_ms(1000);
     pattern_to_display(pattern_star);
     wait_ms(1000);
+    pattern_to_display(a_pattern);
+    wait_ms(1000);
     clear();
 
     }
 }
+
+
+
+
