@@ -15,6 +15,8 @@ jon.trinder@glasgow.ac.uk
  
 */
 
+//DEFINE STATEMENTS FOR 8x8 LED DISPLAY
+
 #define max7219_reg_noop         0x00
 #define max7219_reg_digit0       0x01
 #define max7219_reg_digit1       0x02
@@ -33,13 +35,19 @@ jon.trinder@glasgow.ac.uk
 #define LOW 0
 #define HIGH 1
 
+
+
+
 //  TIMER
 
 Timer timeCount;
 
+// TICKER FOR TIMER INTERRUPT
+Ticker t;
+
 // VARIABLES 
 
-AnalogIn Ain(PTB1);
+AnalogIn Ain(PTB1); //input signal for ADC
 
 SPI max72_spi(PTD2, NC, PTD1);
 DigitalOut load(PTD0); //will provide the load signal
@@ -51,7 +59,7 @@ char  pattern_square[8] = { 0xff, 0x81,0x81,0x81,0x81,0x81,0x81,0xff};
 char  pattern_star[8] = { 0x04, 0x15, 0x0e, 0x1f, 0x0e, 0x15, 0x04, 0x00};
 char a_pattern[8] = {0xff, 0x7e, 0x3c, 0x18, 0x18, 0x18, 0x7e, 0x81};
 
-int Data_ArrayBuffer[8];
+int Data_ArrayBuffer[8]; // Buffer for data in from ADC
 
 //Array to store data from ADC !!!!
 int Data_Array[8];
@@ -83,7 +91,7 @@ void pattern_to_display(char *testdata){
     }
 } 
  
-
+// setup matrix display of 8x8 bit display
 void setup_dot_matrix ()
 {
     // initiation of the max 7219
@@ -107,6 +115,7 @@ void setup_dot_matrix ()
  
 }
 
+//clear the display
 void clear(){
      for (int e=1; e<=8; e++) {    // empty registers, turn all LEDs off
         write_to_max(e,0);
@@ -121,12 +130,22 @@ int adc(){
     i = Ain.read_u16();
     //Aout.write_u16(i);
     //Data_ArrayBuffer[x] = i;
-    printf("Sample i is: %d", i);
-    wait(0.001);
+    printf("Sample i is: %d", i); // removed wait(): we can implement it using tick in the main function.
     
     return i;
     }
 
+// Enter data in the Data_Array using the adc() function
+void populate_data(int Data_Array[8]){
+            for(int i = 0; i < sizeof(Data_Array); i++){
+                 Data_Array[i] = adc()
+                }
+           
+    }
+
+
+void timer_Interrupt(){
+    }
 
 int main()
 {
@@ -135,7 +154,13 @@ int main()
     
     setup_dot_matrix ();      /* setup matrix */
     
-    //loop through patterns
+    t.attach(&populate_data(Data_Array), 10000) //sample data at 10000Hz
+    
+    while(1){
+        
+        }
+    
+    /*loop through patterns
     while(1){
     //da_star();
     pattern_to_display(pattern_diagonal);
@@ -146,11 +171,10 @@ int main()
     wait_ms(1000);
     pattern_to_display(a_pattern);
     wait_ms(1000);
-    clear();
+    clear(); */
 
     }
 }
-
 
 
 
