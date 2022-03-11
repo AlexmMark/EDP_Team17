@@ -48,6 +48,7 @@ Ticker t;
 // VARIABLES 
 
 AnalogIn Ain(PTB1); //input signal for ADC
+AnalogOut Aout(PTE30);
 
 SPI max72_spi(PTD2, NC, PTD1);
 DigitalOut load(PTD0); //will provide the load signal
@@ -128,9 +129,9 @@ int adc(){
     unsigned int i = 0;
     
     i = Ain.read_u16();
-    //Aout.write_u16(i);
+    Aout.write_u16(i);
 
-    printf("Sample i is: %d", i); // removed wait(): we can implement it using tick in the main function.
+    printf("%d,", i); // removed wait(): we can implement it using tick in the main function.
     
     return i;
     }
@@ -143,21 +144,26 @@ void populate_data(int Data_Array[8]){
            
     }
 
-
-void timer_Interrupt(){
-    populate_data(Data_Array);
-    }
-
 int main()
 {
     //start timer
     timeCount.start();
     
+    clear();
+    
     setup_dot_matrix ();      /* setup matrix */
     
-    t.attach(&timer_Interrupt, 10); //sample data at 10000Hz
+    
+    
+  // t.attach(&timer_Interrupt, 10); //sample data at 10Hz
+   
+   
     
     while(1){
+        
+        int i  = adc();
+        
+        wait_us(20000); // half the original input rate
         
         }
     
@@ -175,7 +181,3 @@ int main()
     clear(); */
 
     }
-
-
-
-
