@@ -129,7 +129,7 @@ int adc(){
     
     i = Ain.read_u16();
     //Aout.write_u16(i);
-    //Data_ArrayBuffer[x] = i;
+
     printf("Sample i is: %d", i); // removed wait(): we can implement it using tick in the main function.
     
     return i;
@@ -138,13 +138,14 @@ int adc(){
 // Enter data in the Data_Array using the adc() function
 void populate_data(int Data_Array[8]){
             for(int i = 0; i < sizeof(Data_Array); i++){
-                 Data_Array[i] = adc()
+                 Data_Array[i] = adc();
                 }
            
     }
 
 
 void timer_Interrupt(){
+    populate_data(Data_Array);
     }
 
 int main()
@@ -154,7 +155,7 @@ int main()
     
     setup_dot_matrix ();      /* setup matrix */
     
-    t.attach(&populate_data(Data_Array), 10000) //sample data at 10000Hz
+    t.attach(&timer_Interrupt, 10); //sample data at 10000Hz
     
     while(1){
         
@@ -174,7 +175,7 @@ int main()
     clear(); */
 
     }
-}
+
 
 
 
